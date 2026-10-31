@@ -29,6 +29,7 @@ jobs:
           rm -rf _scaffold/lib
           sed -i 's/recognizer.recognizeText(input)/recognizer.processImage(input)/' src/lib/ocr.dart
           cp -r src/lib _scaffold/lib
+          sed -i 's/val p = mpm.getMediaProjection(code, data)/val p = mpm.getMediaProjection(code, data)!!/' src/tool/android/CaptureService.kt
           cp src/pubspec.yaml _scaffold/pubspec.yaml
           python3 src/tool/patch_manifest.py _scaffold/android/app/src/main/AndroidManifest.xml
 
