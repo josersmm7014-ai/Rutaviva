@@ -32,6 +32,31 @@ jobs:
           cp src/pubspec.yaml _scaffold/pubspec.yaml
           python3 src/tool/patch_manifest.py _scaffold/android/app/src/main/AndroidManifest.xml
 
+      - name: Reglas R8 para ML Kit
+        run: |
+          cat > _scaffold/android/app/proguard-rules.pro <<'RULES'
+          -dontwarn com.google.mlkit.vision.text.chinese.**
+          -dontwarn com.google.mlkit.vision.text.devanagari.**
+          -dontwarn com.google.mlkit.vision.text.japanese.**
+          -dontwarn com.google.mlkit.vision.text.korean.**
+          RULES
+          python3 - <<'PYEOF'
+          import glob
+          for p in glob.glob('_scaffold/android/app/build.gradle*'):
+              s = open(p).read()
+              if 'proguard-rules.pro' in s:
+                  continue
+              if p.endswith('.kts'):
+                  old = 'signingConfig = signingConfigs.getByName("debug")'
+                  new = old + '\n            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")'
+              else:
+                  old = 'signingConfig signingConfigs.debug'
+                  new = old + "\n            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'"
+              assert old in s, 'no se encontro el bloque release'
+              open(p, 'w').write(s.replace(old, new, 1))
+              print('patched', p)
+          PYEOF
+
       - name: Compilar APK
         working-directory: _scaffold
         run: |
