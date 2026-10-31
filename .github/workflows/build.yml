@@ -21,7 +21,7 @@ jobs:
           channel: stable
 
       - name: Descomprimir el proyecto
-        run: unzip -o rutaviva_driver_fase7.zip -d src
+        run: unzip -o rutaviva_driver_fase8.zip -d src
 
       - name: Crear scaffold Android
         run: |
