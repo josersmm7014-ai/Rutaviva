@@ -27,6 +27,7 @@ jobs:
         run: |
           flutter create --org com.rutaviva --project-name rutaviva --platforms=android _scaffold
           rm -rf _scaffold/lib
+          sed -i 's/recognizer.recognizeText(input)/recognizer.processImage(input)/' src/lib/ocr.dart
           cp -r src/lib _scaffold/lib
           cp src/pubspec.yaml _scaffold/pubspec.yaml
           python3 src/tool/patch_manifest.py _scaffold/android/app/src/main/AndroidManifest.xml
